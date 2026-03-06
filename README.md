@@ -17,6 +17,37 @@
 
 **Quick start with Docker:** `docker compose up -d`
 
+# Windows Dependencies & Troubleshooting:
+To set up the necessary environment on Windows, first install Chocolatey:
+
+**Install Chocolatey:**
+`Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))`
+
+**Install essential software:**
+`choco install python -y`
+`choco install nginx -y`
+`choco install docker-desktop -y`
+
+**Verify Docker status:**
+`Get-Service *docker*`
+
+**WSL 2 & Virtualization setup:**
+If you encounter virtualization errors, ensure that your BIOS/UEFI virtualization is enabled. The following commands can be used to manage the Windows subsystem features if required:
+
+*Enable WSL 2:*
+`dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart; dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart`
+
+*Disable WSL 2 (Cleanup):*
+`dism.exe /online /disable-feature /featurename:Microsoft-Windows-Subsystem-Linux /norestart; dism.exe /online /disable-feature /featurename:VirtualMachinePlatform /norestart`
+
+**Manage WSL distributions:**
+`wsl --install`
+`wsl --list --verbose`
+`wsl --unregister <DistroName>`
+
+**Check system virtualization status:**
+`Get-ComputerInfo -Property "HyperV*"`
+
 **ATTENTION!** This script does not search for license keys. Its purpose is to connect to official ESET NOD32 mirror servers (if you have a valid username and password) or unofficial mirrors, download the databases, organize them into folders, and serve them via NGINX to antivirus clients or other mirrors.
 
 ---
@@ -72,4 +103,4 @@
 * Databases for each version are now stored in separate folders. The folder structure is incompatible with previous versions; please manually clear your storage before updating.
 
 **Script Execution Example:**
-![image](https://github.com/user-attachments/assets/9dc000cb-94f6-4c7d-90d3-a9114ca9f850)
+![image](https://github.com/user-attachments/assets/48943a3a-95f6-46c1-b265-6b4245360a53)
