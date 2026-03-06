@@ -18,7 +18,8 @@ services:
       dockerfile: ngx.Dockerfile
     container_name: ngx
     ports:
-      - 8888:80
+      #- 8888:80
+      - "192.168.0.13:22221:80"
     restart: unless-stopped
     volumes:
       - /etc/timezone:/etc/timezone:ro
