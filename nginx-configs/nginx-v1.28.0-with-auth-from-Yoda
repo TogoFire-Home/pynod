@@ -1,16 +1,16 @@
 # ------------------------------------------------------------
-# Определяем версию продукта по User-Agent
+# Determine product version based on User-Agent
 # ------------------------------------------------------------
 map $http_user_agent $ver {
-    # Продукты EEA, EES, EFSW, EMSX, ESFW
+    # Products: EEA, EES, EFSW, EMSX, ESFW
     "~^.*(EEA|EES|EFSW|EMSX|ESFW)\s+Update.*BPC\s+(\d+)(\..*)?$"  ep$2;
 
-    # Все остальные продукты
-    "~^.*Update.*BPC\s+(\d+)(\..*)?$"                            v$1;
+    # All other products
+    "~^.*Update.*BPC\s+(\d+)(\..*)?$"                             v$1;
 }
 
 # ------------------------------------------------------------
-# Нормализация путей для старых версий
+# Normalize paths for older versions
 # ------------------------------------------------------------
 map $ver $ver_path {
     ~^v[3-8]$   v3;
@@ -19,41 +19,41 @@ map $ver $ver_path {
 }
 
 # ============================================================
-# Основной сервер: домен **************
+# Main server: domain **************
 # ============================================================
 server {
     listen 80;
     
-#   listen 443 ssl; # включить https
-#   listen [::]:443 ssl; # включить https ipv6
+    # listen 443 ssl; # enable https
+    # listen [::]:443 ssl; # enable https ipv6
     
     server_name ***********;
 
-# Пусть к SSL серту
-    #ssl_certificate /etc/letsencrypt/live/******/fullchain.pem; # managed by Certbot
-# Путь к сертификату
-    #ssl_certificate_key /etc/letsencrypt/live/*****/privkey.pem; # managed by Certbot
-# Путь к ключу
+    # Path to SSL certificate
+    # ssl_certificate /etc/letsencrypt/live/******/fullchain.pem; # managed by Certbot
+    # Path to SSL certificate key
+    # ssl_certificate_key /etc/letsencrypt/live/*****/privkey.pem; # managed by Certbot
 
-# Дополнительные настройки SSL усиленные, для версий от 10 и выше
-    #ssl_protocols TLSv1.2 TLSv1.3;
-    #ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256';
-    #ssl_prefer_server_ciphers off;
-    #ssl_session_cache shared:SSL:10m;
-    #ssl_session_timeout 10m;
-# Лайтовые настройки SSL, т.к. версии ниже 10й не понимаю то что выше.
-    #ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
-    #ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES128-SHA';
-    #ssl_prefer_server_ciphers off;
-    #ssl_session_cache shared:SSL:10m;
-    #ssl_session_timeout 10m;
+    # Enhanced SSL settings, for versions 10 and above
+    # ssl_protocols TLSv1.2 TLSv1.3;
+    # ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256';
+    # ssl_prefer_server_ciphers off;
+    # ssl_session_cache shared:SSL:10m;
+    # ssl_session_timeout 10m;
 
-    # Базовый root. Меняется под свой путь.
+    # Light SSL settings, as versions below 10 do not support newer protocols
+    # ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+    # ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES128-SHA';
+    # ssl_prefer_server_ciphers off;
+    # ssl_session_cache shared:SSL:10m;
+    # ssl_session_timeout 10m;
+
+    # Base root directory. Change to your actual path.
     set $root_path /var/www/nod32mirror;
     index index.html;
 
     # --------------------------------------------------------
-    # Заголовки
+    # Headers
     # --------------------------------------------------------
     add_header X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
     add_header Cache-Control "no-cache, public, must-revalidate";
@@ -62,7 +62,7 @@ server {
     real_ip_recursive on;
 
     # --------------------------------------------------------
-    # Главная страница
+    # Homepage
     # --------------------------------------------------------
     location = / {
         root  $root_path;
@@ -79,11 +79,11 @@ server {
     # --------------------------------------------------------
     location ~* \.ver$ {
     
-        # HTTP Basic Auth ТОЛЬКО для update.ver
-        auth_basic           "ESET Update Access";  # Сообщение, которое будет показываться при запросе пароля
-        auth_basic_user_file /etc/nginx/.htpasswd;  # # Путь к файлу с паролями
+        # HTTP Basic Auth ONLY for update.ver
+        auth_basic           "ESET Update Access"; # Message shown when requesting a password
+        auth_basic_user_file /etc/nginx/.htpasswd; # Path to password file
 
-        # Блокируем мусор и загрузчики
+        # Block unwanted traffic and downloaders
         if ($http_user_agent ~* ^(wget|aria2|nod32view|perl|php|curl|google|yandex|yahoo|-|mirror|spider|bot|parser|grab)) {
             return 403;
         }
@@ -98,15 +98,15 @@ server {
     }
 
     # --------------------------------------------------------
-    # Остальные файлы обновлений
+    # Other update files
     # --------------------------------------------------------
     location / {
-        root      $root_path/data/$ver_path;
+        root     $root_path/data/$ver_path;
         try_files $uri $uri/ =404;
     }
 
     # --------------------------------------------------------
-    # Логи
+    # Logs
     # --------------------------------------------------------
     access_log /var/log/nginx/access_nod32mirror.log;
     #error_log /var/log/nginx/error_nod32mirror.log debug;
@@ -114,7 +114,7 @@ server {
 }
 
 # ============================================================
-# Сервер для доступа по IP
+# Server for IP access
 # ============================================================
 server {
     listen 80;

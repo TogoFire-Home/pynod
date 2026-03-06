@@ -1,5 +1,5 @@
-# Этот файл является частью проекта PyNOD-Mirror-Tool
-# актуальную версию которого можно скачть по адресу:
+# This file is part of the PyNOD-Mirror-Tool project,
+# the latest version of which can be downloaded at:
 # https://github.com/Scorpikor/pynod-mirror-tool
 
 def web_page_generator(data, only_table, file_path):
@@ -7,30 +7,30 @@ def web_page_generator(data, only_table, file_path):
     html_table_content = f"""<div id="berta-nod32">\n\
     <table class="info_table" align="center" border="1">\n\
         <tr class="c_blue">\n\
-            <th>Версия</th>\n\
-            <th>Версия баз</th>\n\
-            <th>П</th>\n\
-            <th>Скачали</th>\n\
-            <th>Скачали</th>\n\
-            <th>Удалено</th>\n\
-            <th>Базы обновились</th>\n\
-            <th>Последняя проверка</th>\n\
-            <th>Файлов в базе</th>\n\
-            <th>Размер базы</th>\n\
+            <th>Version</th>\n\
+            <th>Database Version</th>\n\
+            <th>P</th>\n\
+            <th>Downloaded</th>\n\
+            <th>Downloaded</th>\n\
+            <th>Deleted</th>\n\
+            <th>Databases Updated</th>\n\
+            <th>Last Check</th>\n\
+            <th>Files in DB</th>\n\
+            <th>DB Size</th>\n\
         </tr>\n"""
-    for status,a,b,c,d,e,f,g,h,i,j in data:
-        if status == 0:                          # строка без ошибки закачки
+    for status, a, b, c, d, e, f, g, h, i, j in data:
+        if status == 0:                          # Row without download errors
         
-            if a =="" and b =="" and c == "" and d =="" and e=="" and f == "" and g =="" and h=="" :
-                html_table_content +=f"""\
+            if a == "" and b == "" and c == "" and d == "" and e == "" and f == "" and g == "" and h == "":
+                html_table_content += f"""\
                 <tr class='c_back'>\n\
                     <td colspan="8">\n\
                     <td>{i}</td>\n\
                     <td>{j}</td>\n\
-                    
+                    \n\
                 </tr>\n"""
             else:
-                html_table_content +=f"""\
+                html_table_content += f"""\
                 <tr class='c_back'>\n\
                     <td>{a}</td>\n\
                     <td>{b}</td>\n\
@@ -44,11 +44,11 @@ def web_page_generator(data, only_table, file_path):
                     <td>{j}</td>\n\
                 </tr>\n"""
         if status == 1:
-                html_table_content +=f"""\
+                html_table_content += f"""\
                 <tr class='c_back'>\n\
-                    
+                    \n\
                     <td>{a}</td>\n\
-                    
+                    \n\
                     <td colspan="9">{b}</td>\n\
                 </tr>\n"""
                                         
@@ -107,10 +107,8 @@ def web_page_generator(data, only_table, file_path):
 <body>""" + html_table_content + """\
 </body>\n\
 </html>"""
-                            
+                    
     
     file = open(file_path, "w")
     file.write(html_content)
     file.close()
-    
-

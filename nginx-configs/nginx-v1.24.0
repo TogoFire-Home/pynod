@@ -1,30 +1,28 @@
-
 map $http_user_agent $ver {
         "~^.*(EEA|EES|EFSW|EMSX|ESFW)+\s+Update.*BPC\s+(\d+)\..*$" "ep$2";
         "~^.*Update.*BPC\s+(\d+)\..*$" "v$1";
 }
 
-
 server {
 
         #listen [::]:80;
-        listen      22221;		# ПОРТ
-        root /var/www/nod32mirror;	# НАСТРОИТЬ ПОД СВОЙ СЕРВЕР
+        listen      22221;        # PORT
+        root /var/www/nod32mirror;  # CONFIGURE FOR YOUR SERVER
         server_name _;
         index index.html;
         
-	# Доп. заголовки
-	add_header X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
-	add_header Cache-Control "no-cache, public, must-revalidate";
-	real_ip_header X-Real-IP;
-	real_ip_recursive on;
+        # Additional headers
+        add_header X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
+        add_header Cache-Control "no-cache, public, must-revalidate";
+        real_ip_header X-Real-IP;
+        real_ip_recursive on;
 
         location = /index.html {
-	root $root_path;          # Устанавливаем начальный root
-        try_files $uri =404;      # Ищем index.html в этом каталоге
+            root $root_path;          # Set initial root
+            try_files $uri =404;      # Look for index.html in this directory
         }
 
-	# Логика для update.ver
+        # Logic for update.ver
         location ~* \.ver$ {
                 if ($ver ~ "^ep[6-9]$")  {rewrite ^/(dll/)?update.ver$ /eset_upd/$ver/$1update.ver break;}
                 if ($ver ~ "^ep1[0-9]$") {rewrite ^/(dll/)?update.ver$ /eset_upd/$ver/$1update.ver break;}
@@ -33,7 +31,7 @@ server {
                 if ($ver ~ "^v1[2-9]$")  {rewrite ^(.*) /eset_upd/$ver/dll/update.ver break;}
         }
 
-        # Логика для "остальных файлов"
+        # Logic for "other files"
         location / {
                 set $ver_path $ver;
 
@@ -43,8 +41,9 @@ server {
                 if ($ver ~ "^v1[0-1]$") {
                 set $ver_path v10;
                 }
-		
-                root $root_path/data/$ver_path;		# ЕСЛИ В nod32ms.conf МЕНЯЛИ prefix, ТО data ЗАМЕНИТЬ НА НОВЫЙ prefix ИЗ nod32ms.conf
+        
+                # IF YOU CHANGED 'prefix' IN nod32ms.conf, REPLACE 'data' WITH YOUR NEW prefix
+                root $root_path/data/$ver_path;
                 try_files $uri $uri/ =404;
                 }
 

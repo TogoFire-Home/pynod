@@ -1,5 +1,5 @@
-# Этот файл является частью проекта PyNOD-Mirror-Tool
-# актуальную версию которого можно скачть по адресу:
+# This file is part of the PyNOD-Mirror-Tool project,
+# the latest version of which can be downloaded at:
 # https://github.com/Scorpikor/pynod-mirror-tool
 
 import random
@@ -156,5 +156,5 @@ def user_agent (ver):
         return random.choice(bzz)
     
     else:
-        print ("Неопределенная версия", ver, "в user_agent.py")
+        print ("Undefined version", ver, "in user_agent.py")
         sys.exit(1)

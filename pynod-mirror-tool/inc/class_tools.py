@@ -1,13 +1,13 @@
-# Этот файл является частью проекта PyNOD-Mirror-Tool
-# актуальную версию которого можно скачть по адресу:
+# This file is part of the PyNOD-Mirror-Tool project,
+# the latest version of which can be downloaded at:
 # https://github.com/Scorpikor/pynod-mirror-tool
 
 class TColor:
-    # use: print t_color.RED + str("TEXT") + t_color.ENDC
+    # Use: print(TColor.RED + "TEXT" + TColor.ENDC)
     GRAY = str("\033[1;30m")
     RED = str("\033[1;31m")
     GREEN = str("\033[1;32m")
-    YELLO = str("\033[1;33m")
+    YELLOW = str("\033[1;33m")
     BLUE = str("\033[1;34m")
     MAGENTA = str("\033[1;35m")
     CYAN = str("\033[1;36m")

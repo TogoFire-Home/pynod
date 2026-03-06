@@ -6,75 +6,70 @@
 [![Closed issues](https://img.shields.io/github/issues-closed/Scorpikor/pynod-mirror-tool?color=darkgreen&cacheSeconds=0)](https://github.com/rzc0d3r/ESET-KeyGen/issues?q=is%3Aissue+is%3Aclosed)
 ![License](https://img.shields.io/github/license/Scorpikor/pynod-mirror-tool)
 
-python-mirror-tool is a Python script for creating a mirror of ESET NOD32 antivirus databases
+**pynod-mirror-tool** is a Python script designed to create a mirror of ESET NOD32 antivirus databases. It supports Windows, Linux, and FreeBSD, and can be run via Docker. It requires Python 3.x and NGINX to serve the databases to antivirus clients.
 
-pynod-mirror-tool  - скрипт, написанный на Рython для создания зеркала баз антивируса ESET NOD32. Поддерживаются операционные системы Windows, Linux, FreeBSD и возможен запуск в Docker, для работы требуется Python 3.x версии и NGINX для раздачи баз антивирусам.
+# Installation:
+1) `cd pynod-mirror-tool`
+2) `pip3 install -r requirements.txt`
+3) Edit the `nod32ms.conf` file according to your needs.
+4) Start downloading the databases: `py update.py`
+5) To distribute updates to antivirus clients, it is recommended to use NGINX. Configuration files are available in the `nginx-configs` folder (choose the one that matches your NGINX version).
 
-# Установка:
-1) cd pynod-mirror-tool
-2) pip3 install -r requiments.txt
-3) Редактируем файл nod32ms.conf под себя
-4) запуск скачивания баз python3 update.py
-5) Для раздачи баз антивирусам рекомендуется использовать NGINX, конфиг которого лежит тут же (папка nginx-configs, подбираем под свою версию nginx)
+**Quick start with Docker:** `docker compose up -d`
 
+**ATTENTION!** This script does not search for license keys. Its purpose is to connect to official ESET NOD32 mirror servers (if you have a valid username and password) or unofficial mirrors, download the databases, organize them into folders, and serve them via NGINX to antivirus clients or other mirrors.
 
-Быстрый запуск в docker: docker compose up -d
-
-ВНИМАНИЕ! Скрипт ключи не ищет. Его задача подключиться к серверу зеркала баз NOD32 официальному (если у вас есть действующий логин и пароль) и не официальному, скачать базы и разложить
-по папкам, после чего через NGINX раздать антивирусам или другим зеркалам.
+---
 
 # 05.12.2025 Update
-+ В конфиг nod32ms.conf в раздел [LOG] добавлена возможность определять путь и имя лог файла в параметре log_file_path
-+ В конфиг nod32ms.conf в раздел [ESET] добавлен параметр mode_one_dir_base, который включает режим хранения баз в одной папке с update.ver,
-для возможности обновления баз клиентов из папки без использования веб сервера
+* Added `log_file_path` parameter to the `[LOG]` section of `nod32ms.conf` to define a custom path and filename for logs.
+* Added `mode_one_dir_base` parameter to the `[ESET]` section of `nod32ms.conf`. This mode stores all databases in a single folder with `update.ver`, allowing clients to update directly from a folder without needing a web server.
 
 # 19.06.2025 Update
-+ добавлена возможность логирования в текстовый файл, соответствующие настройки добавились в nod32ms.conf раздел [LOG] 
-+ настройка информативности вывода в терминал и в текстовый лог из log.py перенесена в конфиг nod32ms.conf раздел [LOG]
+* Added logging to a text file; corresponding settings added to the `[LOG]` section of `nod32ms.conf`.
+* Moved terminal and text log verbosity settings from `log.py` to the `[LOG]` section of `nod32ms.conf`.
 
 # 11.06.2025 Update
-+ файлы патча PROTOSCAN для баз v3 заменены на версию 1454
+* PROTOSCAN patch files for v3 databases replaced with version 1454.
 
 # 10.05.2025 Update
-+ добавлена секция в nod32ms.conf [PATCH] и параметр protoscan_v3_patch, который включает применение патча PROTOSCAN для баз v3 и включает файлы версии 1400.4
-+ исправлены баги с чисткой старых файлов
-+ изменено поведение скрипта при ошибке 401 (ошибка авторизации). Теперь скрипт больше не пытается закачать остальные файлы базы
-+ устранены мелкие косяки и конечно же добавлены новые :) 
+* Added `[PATCH]` section to `nod32ms.conf` with the `protoscan_v3_patch` parameter, which enables the PROTOSCAN patch for v3 databases (includes version 1400.4 files).
+* Fixed bugs related to cleaning up old files.
+* Changed script behavior on 401 error (Unauthorized). The script now stops trying to download the remaining database files upon authentication failure.
+* Fixed minor bugs and, of course, added some new ones :)
 
 # 19.03.2025 Update
-+ В конфиге в разделе [TELEGRAM] добавлен параметр text для вывода текста или напоминания в сообщении telegram
-+ Исправлен алгоритм закачки файла и проверки его размера с поддержкой сжатия
-+ update.ver теперь отчищается от лишних строк, мешающих антивирусам нормально обновляться с зеркала, созданного скриптом
+* Added `text` parameter to the `[TELEGRAM]` section in the config for custom text or reminders in Telegram notifications.
+* Improved the file download algorithm and size verification with compression support.
+* `update.ver` is now cleaned of redundant lines that prevent antivirus clients from updating correctly from the script-generated mirror.
 
-# 3.03.2025 Update
-+ Вернул генерацию html
-+ устранены мелкие глюки
+# 03.03.2025 Update
+* Restored HTML generation.
+* Fixed minor glitches.
 
-# 24.02.2025 Update
-+ Добавлена поддержка Windows
-+ Добавлена многопоточная закачка баз
-+ Исправлены некоторые баги обновления прошлой версии
-+ Теперь update.ver не меняется, что предотвращает "накопление путей" в этом файле при обновлении с зеркал, созданных таким же скриптом
-+ Добавлена отправка отчетов в Telegram
+# 24.04.2025 Update
+* Added Windows support.
+* Added multi-threaded database downloading.
+* Fixed several bugs from the previous version.
+* `update.ver` is no longer modified, preventing "path accumulation" when updating from mirrors created by the same script.
+* Added report delivery via Telegram.
 
-Внимание!  Файл конфигурации nod32ms.conf и файл nginx изменились и для своего сервера необходимо настроить их под себя
-- Временно не работает генерация html
-  
+**Warning!** The `nod32ms.conf` and NGINX configuration files have changed. You must reconfigure them for your server.
+* *Note: HTML generation is temporarily disabled.*
+
 # 21.11.2024 Update
-+ В конфигурационном файле добавлен переключатель для обновлений с официальных серверов ESET или с зеркал, (параметр official_servers_update в nod32ms.conf),
-  который переключает файлы переменных окружения (init.py для режима обновления с зеркала) и  (init_official.py для обновления с официальных серверов ESET)
-+ В режиме обновления с официальных серверов ESET проверяется сервер с меньшим пингом и обновление уже происходит с него.
-+ Добавлена генерация веб страницы, которую можно посмотреть в браузере, так же можно создать отдельную таблицу.
-+ Добавлены некоторые незначительные улучшения.
+* Added a toggle in the configuration file to switch between official ESET servers or mirrors (`official_servers_update` parameter in `nod32ms.conf`). This switches environment variable files (`init.py` for mirror mode and `init_official.py` for official ESET servers).
+* In official update mode, the script checks for the server with the lowest latency and updates from it.
+* Added generation of a web page for browser viewing, with the option to create a separate table.
+* Minor improvements added.
 
 # 24.10.2024 Update
-+ Добавлен функционал повторных попыток скачивания файла при проблемах соединения
-+ Добавлена проверка необходимости скачивания файла.
-+ Добавлена отчистка от старых файлов и папок, которые не нужны в текущей версии баз
-+ Добавлено визуальное оформление вывода
-+ Добавлен параметр информативности вывода, который можно поменять в файле /inc/log.py = log_informativeness
-+ Теперь базы каждой версии лежат в отдельной папке с соответствующим именем и структура папок нового скрипта не совместима с предыдущей  версией, поэтому, обновляя скрипт на новый, отчистите вручную хранилище файлов баз
+* Added retry functionality for file downloads during connection issues.
+* Added a check to determine if a file download is necessary.
+* Added cleanup of old files and folders not required by the current database version.
+* Improved visual output formatting.
+* Added an output verbosity parameter (can be changed in `/inc/log.py` via `log_informativeness`).
+* Databases for each version are now stored in separate folders. The folder structure is incompatible with previous versions; please manually clear your storage before updating.
 
-Пример работы скрипта:
-![image](https://github.com/user-attachments/assets/fb27198b-6a60-435f-b1a9-076e99aaca23)
-
+**Script Execution Example:**
+![image](https://github.com/user-attachments/assets/9dc000cb-94f6-4c7d-90d3-a9114ca9f850)

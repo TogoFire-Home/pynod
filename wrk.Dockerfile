@@ -5,5 +5,5 @@ COPY pynod-mirror-tool/ .
 COPY crontab /etc/cron.d/crontab
 RUN chmod 0644 /etc/cron.d/crontab
 RUN /usr/bin/crontab /etc/cron.d/crontab
-RUN pip install -r /app/pynod/requiments.txt
+RUN pip install -r /app/pynod/requirements.txt
 CMD ["cron", "-f", "-l", "8"]
